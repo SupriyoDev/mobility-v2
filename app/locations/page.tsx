@@ -25,6 +25,7 @@ import Link from "next/link";
 import React, { useCallback, useEffect, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
+import { LoginLink, useKindeBrowserClient } from "@kinde-oss/kinde-auth-nextjs";
 
 interface MallLocation {
   id: string;
@@ -58,6 +59,8 @@ const Locations = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [filterCity, setFilterCity] = useState("all");
 
+  const { isAuthenticated } = useKindeBrowserClient();
+
   // const filterLocations = useCallback(() => {
   //   let filtered = locations.filter(location => location.is_active);
 
@@ -88,8 +91,6 @@ const Locations = () => {
   // ];
 
   const cities = filteredLocations.map((location) => location.city);
-
-  const handleBooking = () => {};
 
   if (isLoading) {
     return (
@@ -257,17 +258,28 @@ const Locations = () => {
 
                     {/* Action Buttons */}
                     <div className="flex gap-3 items-center justify-between ">
-                      <Link
-                        href={`/bookingflow/${location.name
-                          .split(" ")
-                          .join("-")}`}
-                      >
-                        <Button className="flex-1  bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white shadow-lg hover:shadow-xl transition-all">
-                          <Car className="w-4 h-4 mr-2" />
-                          Book Now
-                          <ArrowRight className="w-4 h-4 ml-2" />
-                        </Button>
-                      </Link>
+                      {isAuthenticated ? (
+                        <Link
+                          href={`/bookingflow/${location.name
+                            .split(" ")
+                            .join("-")}`}
+                        >
+                          <Button className="flex-1  bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white shadow-lg hover:shadow-xl transition-all">
+                            <Car className="w-4 h-4 mr-2" />
+                            Book Now
+                            <ArrowRight className="w-4 h-4 ml-2" />
+                          </Button>
+                        </Link>
+                      ) : (
+                        <LoginLink>
+                          {" "}
+                          <Button className="flex-1  bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white shadow-lg hover:shadow-xl transition-all">
+                            <Car className="w-4 h-4 mr-2" />
+                            Login to Book Now
+                            <ArrowRight className="w-4 h-4 ml-2" />
+                          </Button>{" "}
+                        </LoginLink>
+                      )}
 
                       <Button
                         variant="outline"

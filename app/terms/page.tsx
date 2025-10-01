@@ -2,10 +2,8 @@
 
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
 import {
   AlertTriangle,
-  CandlestickChart,
   CheckCircle,
   Clock,
   CreditCard,
@@ -16,7 +14,7 @@ import {
   TicketX,
   Users,
 } from "lucide-react";
-import React, { useState } from "react";
+import { useState } from "react";
 
 const sections = [
   {
@@ -107,9 +105,9 @@ const waiverterms = [
   "You understood that the scooter is to be used inside mall premises only",
   "You will not operate the scooter recklessly, perform stunts, or use it outside designated areas",
   "You are financially responsible for any damage to the scooter caused during your rental",
-  "you understood that AED 500 deposit is required, from which rental charges will be deducted, and the balance refunded after inspection",
-  "you release Adventure Star from any liability for injuries, accidents, or damages arising from your use of the scooter",
-  " you will immediately report any malfunction, incident, or emergency to the staff or via the scooter's helpline number",
+  "You understood that AED 500 deposit is required, from which rental charges will be deducted, and the balance refunded after inspection",
+  "You release Adventure star from any liability for injuries, accidents, or damages arising from your use of the scooter. You agree that you are solely responsible for any harm, loss, or damage caused to yourself, to third parties, or to any property, including injuries or accidents involving other persons, resulting from your operation of the scooter.",
+  "You will immediately report any malfunction, incident, or emergency to the staff or via the scooter's helpline number",
 ];
 
 const TermsConditions = () => {

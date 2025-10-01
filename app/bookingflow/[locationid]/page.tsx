@@ -48,7 +48,7 @@ const BookingFlowbyLocation = ({
 
   const [bookingDate, setBookingDate] = useState(new Date());
   const [timeSlot, setTimeSlot] = useState("");
-  const [duration, setDuration] = useState(1);
+
   const [yourAge, setYourAge] = useState("");
   const [selectedBooth, setBooth] = useState("");
   const [termsAccepted, setTermsAccepted] = useState(false);
@@ -56,7 +56,7 @@ const BookingFlowbyLocation = ({
   const data = {
     bookingDate,
     timeSlot,
-    duration,
+
     yourAge,
     termsAccepted,
   };
@@ -73,6 +73,8 @@ const BookingFlowbyLocation = ({
     "6:00 PM",
     "7:00 PM",
     "8:00 PM",
+    "9:00 PM",
+    "10:00 PM",
   ];
   const depositAmount = 500;
 
@@ -144,18 +146,12 @@ const BookingFlowbyLocation = ({
     );
   }
 
-  const handleAgeChange = (value: string) => {
-    const age = parseInt(value);
-    if (age < 18 || age > 100) return;
-    setYourAge(value);
-  };
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-white py-12 px-4">
       <Card className="max-w-3xl mx-auto shadow-2xl border-blue-100">
         <CardHeader className="bg-gradient-to-r from-bgtertiary to-bgsecondary text-white p-6  rounded-t-xl">
           <CardTitle className="text-3xl font-bold">
-            Book Your Adventure
+            Book Your Scooter
           </CardTitle>
           {bookingLocation && (
             <div className="flex items-center space-x-2 mt-2 opacity-90">
@@ -226,32 +222,6 @@ const BookingFlowbyLocation = ({
 
             {/* Right Column: Details & Summary */}
             <div className="space-y-6">
-              <div>
-                <Label htmlFor="duration" className="text-lg font-semibold">
-                  Duration (Hours)
-                </Label>
-                <Select
-                  onValueChange={(val) => setDuration(parseInt(val))}
-                  defaultValue="1"
-                >
-                  <SelectTrigger id="duration">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="1">1 Hour</SelectItem>
-                    <SelectItem value="2">2 Hours</SelectItem>
-                    <SelectItem value="3">3 Hours</SelectItem>
-                    <SelectItem value="4">4 Hours</SelectItem>
-                    <SelectItem value="5">5 Hours</SelectItem>
-                    <SelectItem value="6">6 Hours</SelectItem>
-                    <SelectItem value="7">7 Hours</SelectItem>
-                    <SelectItem value="8">8 Hours</SelectItem>
-                    <SelectItem value="9">9 Hours</SelectItem>
-                    <SelectItem value="10">10 Hours</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
               <div>
                 <Label htmlFor="child-age" className="text-lg font-semibold">
                   Your Age

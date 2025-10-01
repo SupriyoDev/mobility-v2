@@ -39,7 +39,7 @@ const Header = () => {
   const userData = null;
 
   const { isAuthenticated, user } = useKindeBrowserClient();
-
+  console.log(user);
   const handleLogout = async () => {};
 
   // Show user info only after hydration and mounting
