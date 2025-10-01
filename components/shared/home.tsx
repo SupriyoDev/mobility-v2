@@ -25,6 +25,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import HeroVideoDialog from "@/components/magicui/hero-video-dialog";
+import Image from "next/image";
 
 export default function HomePage() {
   const [user, setUser] = useState(null);
@@ -219,7 +220,7 @@ export default function HomePage() {
               Why Mobility UAE Scooters?
             </h2>
             <p className="text-xl  max-w-3xl text-white/70 mx-auto">
-              We've designed every aspect of our service to ensure safety,
+              We&apos;ve designed every aspect of our service to ensure safety,
               convenience, and comfort for you.
             </p>
           </div>
@@ -264,8 +265,10 @@ export default function HomePage() {
           <div className="grid lg:grid-cols-2 gap-16 items-center">
             <div className="relative group">
               <div className="bg-white rounded-3xl p-8 shadow-2xl group-hover:shadow-3xl transition-all duration-500">
-                <img
-                  src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68c1bd998b33c70dc0ed3c4f/1d066705f_WhatsAppImage2025-09-09at71751PM.jpg"
+                <Image
+                  src="/scooter.jpeg"
+                  width={400}
+                  height={400}
                   alt="Premium Electric Scooter for Kids"
                   className="w-full h-auto transform group-hover:scale-105 transition-transform duration-500"
                 />

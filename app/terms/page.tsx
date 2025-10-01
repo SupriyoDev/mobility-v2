@@ -299,7 +299,7 @@ const TermsConditions = () => {
         {/* Contact for Questions */}
         <div className="mt-8 text-center">
           <p className="text-gray-600 mb-4">
-            Questions about these terms? We're here to help!
+            Questions about these terms? We&apos;re here to help!
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button variant="outline">

@@ -145,8 +145,8 @@ const ContactPage = () => {
             Get in Touch
           </h1>
           <p className="text-xl text-white/90 max-w-3xl mx-auto">
-            We're here to help! Whether you have questions, need support, or
-            want to share feedback, our team is ready to assist you.
+            We&apos;re here to help! Whether you have questions, need support,
+            or want to share feedback, our team is ready to assist you.
           </p>
         </div>
       </section>
@@ -167,8 +167,8 @@ const ContactPage = () => {
                 <Alert className="mb-6 bg-green-50 border-green-200">
                   <CheckCircle className="h-4 w-4 text-green-600" />
                   <AlertDescription className="text-green-800">
-                    Thank you for contacting us! We'll get back to you within 24
-                    hours.
+                    Thank you for contacting us! We&apos;ll get back to you
+                    within 24 hours.
                   </AlertDescription>
                 </Alert>
               )}
@@ -348,8 +348,8 @@ const ContactPage = () => {
               Frequently Asked Questions
             </h2>
             <p className="text-lg text-white max-w-[700px] mx-auto">
-              Quick answers to common questions. Can't find what you're looking
-              for? Contact us!
+              Quick answers to common questions. Can&apos;t find what you're
+              looking for? Contact us!
             </p>
           </div>
 

@@ -162,7 +162,8 @@ const Dashboard = () => {
                 Welcome back, {user.full_name?.split(" ")[0]}! 👋
               </h1>
               <p className="text-gray-600">
-                Here's what's happening with your Kiddy Cars account today.
+                Here&apos;s what&apos;s happening with your Kiddy Cars account
+                today.
               </p>
             </div>
             <div className="mt-4 md:mt-0 flex gap-3">

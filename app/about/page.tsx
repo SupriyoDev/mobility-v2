@@ -1,7 +1,6 @@
 import { Badge } from "@/components/ui/badge";
 import {
   Award,
-  Car,
   CheckCircle,
   Clock,
   Heart,
@@ -10,7 +9,6 @@ import {
   Users,
 } from "lucide-react";
 import Image from "next/image";
-import React from "react";
 
 const About = () => {
   const values = [
@@ -122,8 +120,10 @@ const About = () => {
             <div className="relative">
               <div className="relative group">
                 <div className="bg-white rounded-2xl p-6 shadow-2xl">
-                  <img
-                    src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68c1bd998b33c70dc0ed3c4f/1d066705f_WhatsAppImage2025-09-09at71751PM.jpg"
+                  <Image
+                    src="/scooter.jpeg"
+                    width={400}
+                    height={400}
                     alt="Premium Kiddy Cars Scooter"
                     className="w-full h-auto transform group-hover:scale-105 transition-transform duration-500"
                   />
@@ -210,8 +210,8 @@ const About = () => {
               </h2>
               <p className="text-lg text-white mb-8 leading-relaxed">
                 We go above and beyond industry standards to ensure every
-                adult's safety and every parent's peace of mind. Here's what
-                sets us apart:
+                adult&apos;s safety and every parent&apos;s peace of mind.
+                Here&apos;s what sets us apart:
               </p>
 
               <div className="space-y-4">
