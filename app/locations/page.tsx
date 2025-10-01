@@ -25,7 +25,11 @@ import Link from "next/link";
 import React, { useCallback, useEffect, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { LoginLink, useKindeBrowserClient } from "@kinde-oss/kinde-auth-nextjs";
+import {
+  LoginLink,
+  RegisterLink,
+  useKindeBrowserClient,
+} from "@kinde-oss/kinde-auth-nextjs";
 
 interface MallLocation {
   id: string;
@@ -272,19 +276,19 @@ const Locations = () => {
                         </Link>
                       ) : (
                         <div className=" flex flex-row items-center gap-1.5">
-                          <LoginLink>
+                          <RegisterLink>
                             {" "}
                             <Button className="flex-1  bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white shadow-lg hover:shadow-xl transition-all">
                               Online Book
                               <ArrowRight className="w-4 h-4 ml-2" />
                             </Button>{" "}
-                          </LoginLink>
-                          <LoginLink>
+                          </RegisterLink>
+                          <RegisterLink postLoginRedirectURL="/onsite-booking">
                             <Button className="flex-1  bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white shadow-lg hover:shadow-xl transition-all">
                               Onsite Book
                               <ArrowRight className="w-4 h-4 ml-2" />
                             </Button>
-                          </LoginLink>
+                          </RegisterLink>
                         </div>
                       )}
 

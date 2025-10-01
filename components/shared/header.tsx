@@ -118,7 +118,7 @@ const Header = () => {
                       My Bookings
                     </Link>
                   </DropdownMenuItem>
-                  <LogoutLink>
+                  <LogoutLink postLogoutRedirectURL="/">
                     <DropdownMenuItem
                       onClick={handleLogout}
                       className="flex items-center text-red-600"
