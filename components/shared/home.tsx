@@ -2,30 +2,25 @@
 
 import { useState } from "react";
 
+import HeroVideoDialog from "@/components/magicui/hero-video-dialog";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   ArrowRight,
-  Battery,
   BatteryCharging,
-  BatteryFull,
-  BatteryPlus,
   Calendar,
   Car,
   CarIcon,
-  Clock,
   Download,
   MapPin,
   Shield,
   Smartphone,
-  Sparkles,
   Star,
   Wallet,
   Weight,
 } from "lucide-react";
-import Link from "next/link";
-import HeroVideoDialog from "@/components/magicui/hero-video-dialog";
 import Image from "next/image";
+import Link from "next/link";
 
 export default function HomePage() {
   const [user, setUser] = useState(null);
@@ -426,16 +421,24 @@ export default function HomePage() {
               </Link>
             ) : (
               <Link href={"#"}>
-                <img
+                <Image
                   src={"/abtn.png"}
                   alt=""
+                  width={300}
+                  height={300}
                   className="w-[200px] h-auto mr-5"
                 />
               </Link>
             )}
 
             <Link href={"#"}>
-              <img src={"/gbtn.png"} alt="" className="w-[200px] h-auto" />
+              <Image
+                width={300}
+                height={300}
+                src={"/gbtn.png"}
+                alt=""
+                className="w-[200px] h-auto"
+              />
             </Link>
           </div>
 
