@@ -21,6 +21,7 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { LoginLink, RegisterLink } from "@kinde-oss/kinde-auth-nextjs";
 
 export default function HomePage() {
   const [user, setUser] = useState(null);
@@ -120,11 +121,11 @@ export default function HomePage() {
               </p>
 
               <div className="flex flex-col max-md:items-center sm:flex-row gap-4 justify-center lg:justify-start">
-                <Link href={"/locations"}>
+                <RegisterLink postLoginRedirectURL="/onsite-booking">
                   <button className=" max-md:w-[300px] flex items-center justify-center gap-2 shadow-[0_4px_14px_0_rgb(0,118,255,39%)] hover:shadow-[0_6px_20px_rgba(0,118,255,23%)] hover:bg-gray-900/90 px-8 py-2 bg-gray-900 rounded-md text-white text-base transition duration-200 ease-linear font-medium">
-                    Book Now <ArrowRight className="w-5 h-5 ml-2" />
+                    Onsite Booking <ArrowRight className="w-5 h-5 ml-2" />
                   </button>
-                </Link>
+                </RegisterLink>
 
                 <Link href={"#footer"}>
                   <button className=" max-md:w-[300px] justify-center flex items-center gap-2 shadow-[0_4px_14px_0_rgb(0,0,0,10%)] hover:shadow-[0_6px_20px_rgba(93,93,93,23%)] px-8 py-2 bg-[#fff] text-[#696969] rounded-md  transition duration-200 ease-linear font-medium">

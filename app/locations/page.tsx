@@ -271,14 +271,21 @@ const Locations = () => {
                           </Button>
                         </Link>
                       ) : (
-                        <LoginLink>
-                          {" "}
-                          <Button className="flex-1  bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white shadow-lg hover:shadow-xl transition-all">
-                            <Car className="w-4 h-4 mr-2" />
-                            Login to Book Now
-                            <ArrowRight className="w-4 h-4 ml-2" />
-                          </Button>{" "}
-                        </LoginLink>
+                        <div className=" flex flex-row items-center gap-1.5">
+                          <LoginLink>
+                            {" "}
+                            <Button className="flex-1  bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white shadow-lg hover:shadow-xl transition-all">
+                              Online Book
+                              <ArrowRight className="w-4 h-4 ml-2" />
+                            </Button>{" "}
+                          </LoginLink>
+                          <LoginLink>
+                            <Button className="flex-1  bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white shadow-lg hover:shadow-xl transition-all">
+                              Onsite Book
+                              <ArrowRight className="w-4 h-4 ml-2" />
+                            </Button>
+                          </LoginLink>
+                        </div>
                       )}
 
                       <Button
@@ -309,7 +316,7 @@ const Locations = () => {
       <section className="py-16 bg-gradient-to-r from-bgtertiary to-bgsecondary">
         <div className="max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl lg:text-4xl font-bold text-white mb-4">
-            We’re expanding!
+            We&apos;re expanding!
           </h2>
           <p className="text-xl text-blue-100 mb-8">
             Stay tuned for upcoming locations near you.
