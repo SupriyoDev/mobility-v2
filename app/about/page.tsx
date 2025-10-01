@@ -282,8 +282,8 @@ const About = () => {
                 Family First
               </h3>
               <p className="text-white/80">
-                Every decision we make is guided by what's best for Adults and
-                families
+                Every decision we make is guided by what&apos;s best for Adults
+                and families
               </p>
             </div>
           </div>

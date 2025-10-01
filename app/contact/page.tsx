@@ -348,8 +348,8 @@ const ContactPage = () => {
               Frequently Asked Questions
             </h2>
             <p className="text-lg text-white max-w-[700px] mx-auto">
-              Quick answers to common questions. Can&apos;t find what you're
-              looking for? Contact us!
+              Quick answers to common questions. Can&apos;t find what
+              you&apos;re looking for? Contact us!
             </p>
           </div>
 
