@@ -42,7 +42,7 @@ export default function AllBookings() {
   });
 
   const filterAndSortBookings = useCallback(() => {
-    let result = bookings;
+    const result = bookings;
 
     // // Filter by status
     // if (statusFilter !== "all") {
