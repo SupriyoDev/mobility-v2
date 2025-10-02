@@ -39,8 +39,6 @@ const Header = () => {
   const userData = null;
 
   const { isAuthenticated, user } = useKindeBrowserClient();
-  console.log(user);
-  const handleLogout = async () => {};
 
   // Show user info only after hydration and mounting
 
@@ -112,17 +110,23 @@ const Header = () => {
                       My Dashboard
                     </Link>
                   </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
+                  {/* <DropdownMenuItem asChild>
                     <Link href={"/bookings"} className="flex items-center">
                       <Car className="w-4 h-4 mr-2" />
                       My Bookings
                     </Link>
+                  </DropdownMenuItem> */}
+                  <DropdownMenuItem asChild>
+                    <Link
+                      href={"/onsite-booking"}
+                      className="flex items-center"
+                    >
+                      <Car className="w-4 h-4 mr-2" />
+                      Onsite Booking
+                    </Link>
                   </DropdownMenuItem>
                   <LogoutLink postLogoutRedirectURL="/">
-                    <DropdownMenuItem
-                      onClick={handleLogout}
-                      className="flex items-center text-red-600"
-                    >
+                    <DropdownMenuItem className="flex items-center text-red-600">
                       <LogOut className="w-4 h-4 mr-2" />
                       Logout
                     </DropdownMenuItem>
@@ -205,15 +209,16 @@ const Header = () => {
                 >
                   My Bookings
                 </Link>
-                <button
-                  onClick={() => {
-                    setIsMenuOpen(false);
-                    handleLogout();
-                  }}
-                  className="w-full text-left px-3 py-2 rounded-lg font-medium text-red-600 hover:bg-red-50"
-                >
-                  Logout
-                </button>
+                <LogoutLink postLogoutRedirectURL="/">
+                  <button
+                    onClick={() => {
+                      setIsMenuOpen(false);
+                    }}
+                    className="w-full text-left px-3 py-2 rounded-lg font-medium text-red-600 hover:bg-red-50"
+                  >
+                    Logout
+                  </button>
+                </LogoutLink>
               </div>
             )}
           </div>

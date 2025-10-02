@@ -16,7 +16,7 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 
-const sections = [
+export const sections = [
   {
     icon: Users,
     title: "Eligibility Criteria",
@@ -99,7 +99,7 @@ return of the scooter`,
   },
 ];
 
-const waiverterms = [
+export const waiverterms = [
   "You are at least  20 years old and eligible to operate a mobility scooter",
   "You have been briefed by Adventure Star staff on the correct and safe usage of the scooter",
   "You understood that the scooter is to be used inside mall premises only",

@@ -36,7 +36,9 @@ export default function RootLayout({
           >
             <Header />
             <main>{children}</main>
+
             <Footer />
+
             <Toaster
               position="top-center"
               toastOptions={
