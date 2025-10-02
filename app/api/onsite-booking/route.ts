@@ -8,7 +8,7 @@ export async function POST(req: NextRequest) {
   try {
     const { getUser } = getKindeServerSession();
     const user = await getUser();
-    if (user?.id !== "kp_30e438237edd413782de64cd674060c8") {
+    if (user?.id !== "kp_ec942ccb8ce64da2b14348e55c6bcef4") {
       return NextResponse.json(
         { success: false, error: "User is not authenticated" },
         { status: 400 }
