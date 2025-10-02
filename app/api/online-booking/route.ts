@@ -65,6 +65,12 @@ export async function GET() {
     const { getUser } = getKindeServerSession();
     const user = await getUser();
 
+    if (!user?.id) {
+      return NextResponse.json({
+        success: false,
+      });
+    }
+
     let res: OnlineBooking[];
 
     if (allowedAdmins.includes(user?.id ?? "")) {
@@ -73,7 +79,7 @@ export async function GET() {
       res = await db
         .select()
         .from(onlineBookingTable)
-        .where(eq(onlineBookingTable.user_id, user?.id!));
+        .where(eq(onlineBookingTable.user_id, user?.id));
     }
 
     return NextResponse.json({

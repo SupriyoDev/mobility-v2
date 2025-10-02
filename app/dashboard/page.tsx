@@ -410,8 +410,11 @@ export default function AllBookings() {
                         <BookingCard booking={booking} key={index} />
                       ))} */}
 
-                      {allOnlineBookings?.map((booking) => (
-                        <tr className="hover:bg-blue-50 transition-colors  px-4 ">
+                      {allOnlineBookings?.map((booking, i) => (
+                        <tr
+                          className="hover:bg-blue-50 transition-colors  px-4 "
+                          key={i}
+                        >
                           <td className="px-6 py-4 font-semibold text-blue-900 w-[15%]">
                             {booking.id.slice(0, 8)}
                           </td>
@@ -454,8 +457,11 @@ export default function AllBookings() {
         {!isAdmin && (
           <div>
             {userOnlineBookings &&
-              userOnlineBookings?.map((booking) => (
-                <Card className="shadow-lg hover:shadow-xl transition-all duration-300">
+              userOnlineBookings?.map((booking, i) => (
+                <Card
+                  className="shadow-lg hover:shadow-xl transition-all duration-300"
+                  key={i}
+                >
                   <CardHeader className="flex justify-between items-center">
                     <div className="flex items-center gap-2">
                       <Hash className="w-5 h-5 text-blue-600" />
