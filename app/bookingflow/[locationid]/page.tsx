@@ -20,7 +20,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useUserOnlineBookingStore } from "@/store/store";
 import { CheckedState } from "@radix-ui/react-checkbox";
+import axios from "axios";
 import {
   AlertTriangle,
   ArrowRight,
@@ -31,6 +33,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import React, { use, useState } from "react";
+import { useShallow } from "zustand/react/shallow";
 
 const BookingFlowbyLocation = ({
   params,
@@ -38,28 +41,47 @@ const BookingFlowbyLocation = ({
   params: Promise<{ locationid: string }>;
 }) => {
   const { locationid } = use(params);
-  console.log(locationid);
 
-  const [bookingLocation, setBookingLocation] = useState(null);
-  const [currentUser, setCurrentUser] = useState(null);
+  const {
+    terms_accepted,
+    booking_type,
+    booking_date,
+    booking_time,
+    booking_booth,
+    payment_method,
+    payment_status,
+
+    setTermsAccepted,
+    setBookingType,
+    setBookingDate,
+    setBookingTime,
+    setBookingBooth,
+
+    setPaymentMethod,
+    setPaymentStatus,
+  } = useUserOnlineBookingStore(
+    useShallow((state) => ({
+      terms_accepted: state.terms_accepted,
+      booking_type: state.booking_type,
+      booking_date: state.booking_date,
+      booking_time: state.booking_time,
+      booking_booth: state.booking_booth,
+      payment_method: state.payment_method,
+      payment_status: state.payment_status,
+
+      setTermsAccepted: state.setTermsAccepted,
+      setBookingType: state.setBookingType,
+      setBookingDate: state.setBookingDate,
+      setBookingTime: state.setBookingTime,
+      setBookingBooth: state.setBookingBooth,
+
+      setPaymentMethod: state.setPaymentMethod,
+      setPaymentStatus: state.setPaymentStatus,
+    }))
+  );
+
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [isProcessing, setIsProcessing] = useState(false);
-
-  const [bookingDate, setBookingDate] = useState(new Date());
-  const [timeSlot, setTimeSlot] = useState("");
-
-  const [yourAge, setYourAge] = useState("");
-  const [selectedBooth, setBooth] = useState("");
-  const [termsAccepted, setTermsAccepted] = useState(false);
-
-  const data = {
-    bookingDate,
-    timeSlot,
-
-    yourAge,
-    termsAccepted,
-  };
 
   const timeSlots = [
     "10:00 AM",
@@ -74,77 +96,40 @@ const BookingFlowbyLocation = ({
     "7:00 PM",
     "8:00 PM",
     "9:00 PM",
-    "10:00 PM",
   ];
   const depositAmount = 500;
 
-  // const handleBookingSubmit = async () => {
-  //     if (!bookingDate || !timeSlot || !childAge || !termsAccepted) {
-  //       setError("Please fill all required fields and accept the terms.");
-  //       return;
-  //     }
-  //     setError(null);
-  //     setIsProcessing(true);
+  // if (isLoading) {
+  //   return (
+  //     <div className="flex justify-center items-center min-h-[60vh]">
+  //       <Loader2 className="w-8 h-8 animate-spin text-blue-500" />
+  //     </div>
+  //   );
+  // }
 
-  //     try {
-  //       // 1. Create the booking record
-  //       const newBooking = await Booking.create({
-  //         user_email: currentUser.email,
-  //         location_id: locationId,
-  //         booking_date: format(bookingDate, "yyyy-MM-dd"),
-  //         start_time: timeSlot,
-  //         duration_hours: duration,
-  //         child_age: parseInt(childAge),
-  //         total_amount: depositAmount, // For now, total is the deposit
-  //         deposit_amount: depositAmount,
-  //         status: "pending",
-  //         payment_method: "Stripe (Simulated)"
-  //       });
+  const handleBookingSubmit = async () => {
+    setIsLoading(true);
+    try {
+      const data = {
+        terms_accepted,
+        booking_type: "online",
+        booking_date: booking_date.toISOString(),
+        booking_time,
+        payment_method,
+        booking_booth,
+        booking_location: locationid,
+        payment_status: "pending",
+      };
 
-  //       // 2. Create the transaction record
-  //       await Transaction.create({
-  //         user_email: currentUser.email,
-  //         type: "deposit",
-  //         amount: depositAmount,
-  //         description: `Deposit for booking at ${bookingLocation.name}`,
-  //         booking_id: newBooking.id,
-  //         status: "pending"
-  //       });
+      const res = await axios.post("/api/online-booking", data);
 
-  //       // 3. Simulate redirect to Stripe & successful payment
-  //       // In a real app, you'd redirect to a Stripe Checkout URL here.
-  //       // After Stripe confirms payment, it would hit a webhook to update the status.
-  //       // We will simulate this process.
-  //       await new Promise(resolve => setTimeout(resolve, 2000)); // Simulate payment processing time
-
-  //       // 4. Update booking and transaction to 'confirmed'/'completed'
-  //       await Booking.update(newBooking.id, { status: "confirmed" });
-  //       const relatedTransactions = await Transaction.filter({ booking_id: newBooking.id });
-  //       if (relatedTransactions.length > 0) {
-  //         await Transaction.update(relatedTransactions[0].id, { status: "completed" });
-  //       }
-
-  //       // 5. Update user's wallet (optional, for real flow)
-  //       // await User.updateMyUserData({ wallet_balance: currentUser.wallet_balance + depositAmount });
-
-  //       // 6. Redirect to confirmation page
-  //       navigate(`${createPageUrl("BookingConfirmation")}?bookingId=${newBooking.id}`);
-
-  //     } catch (err) {
-  //       setError("An error occurred during booking. Please try again.");
-  //       console.error(err);
-  //     }
-
-  //     setIsProcessing(false);
-  //   };
-
-  if (isLoading) {
-    return (
-      <div className="flex justify-center items-center min-h-[60vh]">
-        <Loader2 className="w-8 h-8 animate-spin text-blue-500" />
-      </div>
-    );
-  }
+      console.log(res);
+    } catch (error: any) {
+      console.log(error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-white py-12 px-4">
@@ -153,10 +138,10 @@ const BookingFlowbyLocation = ({
           <CardTitle className="text-3xl font-bold">
             Book Your Scooter
           </CardTitle>
-          {bookingLocation && (
+          {locationid && (
             <div className="flex items-center space-x-2 mt-2 opacity-90">
               <MapPin className="w-5 h-5" />
-              {/* <span>{bookingLocation.name}</span> */}
+              <span>{locationid}</span>
             </div>
           )}
         </CardHeader>
@@ -182,8 +167,8 @@ const BookingFlowbyLocation = ({
                 <Calendar
                   required
                   mode="single"
-                  selected={bookingDate}
-                  onSelect={setBookingDate}
+                  selected={booking_date}
+                  onSelect={(val) => setBookingDate(val)}
                   className="rounded-md border bg-white"
                   disabled={{
                     before: new Date(),
@@ -205,7 +190,10 @@ const BookingFlowbyLocation = ({
                   <Clock className="w-5 h-5 mr-2 text-bgsecondary" />
                   Select Time
                 </Label>
-                <Select onValueChange={setTimeSlot} value={timeSlot}>
+                <Select
+                  onValueChange={(val) => setBookingTime(val)}
+                  // value={timeSlot}
+                >
                   <SelectTrigger id="time-slot">
                     <SelectValue placeholder="Choose a time slot" />
                   </SelectTrigger>
@@ -217,6 +205,9 @@ const BookingFlowbyLocation = ({
                     ))}
                   </SelectContent>
                 </Select>
+                <p className="text-xs text-gray-500 mt-2">
+                  Please arrive 30 minutes before your scheduled time.{" "}
+                </p>
               </div>
             </div>
 
@@ -235,7 +226,7 @@ const BookingFlowbyLocation = ({
                   {" "}
                   Select Booth
                 </Label>
-                <Select onValueChange={(val) => setBooth(val)}>
+                <Select onValueChange={(val) => setBookingBooth(val)}>
                   <SelectTrigger id="booth">
                     <SelectValue placeholder="select booth" />
                   </SelectTrigger>
@@ -253,6 +244,25 @@ const BookingFlowbyLocation = ({
                 </Select>
               </div>
 
+              <div>
+                <Label
+                  htmlFor="payment_method"
+                  className="text-lg font-semibold"
+                >
+                  {" "}
+                  Select Payment Method
+                </Label>
+                <Select onValueChange={(val) => setPaymentMethod(val)}>
+                  <SelectTrigger id="payment_method">
+                    <SelectValue placeholder="select Payment Method" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="offline">Offline</SelectItem>
+                    {/* <SelectItem value="online">Online</SelectItem> */}
+                  </SelectContent>
+                </Select>
+              </div>
+
               <div className="bg-bgsecondary/10 p-6 rounded-xl border border-bgsecondary/40">
                 <h3 className="text-lg font-bold text-gray-900 mb-4">
                   Booking Summary
@@ -266,13 +276,16 @@ const BookingFlowbyLocation = ({
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-600">Deposit:</span>
-                    <span className="font-semibold">{depositAmount} AED</span>
+                    <span className="font-semibold">
+                      {/* {depositAmount} AED */}
+                      Offline Payment
+                    </span>
                   </div>
-                  <hr className="my-2 border-blue-200" />
+                  {/* <hr className="my-2 border-blue-200" />
                   <div className="flex justify-between text-xl font-bold text-bgtertiary">
                     <span>Total Payable:</span>
                     <span>{depositAmount} AED</span>
-                  </div>
+                  </div> */}
                 </div>
               </div>
             </div>
@@ -281,7 +294,7 @@ const BookingFlowbyLocation = ({
           <div className="flex items-start space-x-3 mt-4">
             <Checkbox
               id="terms"
-              onCheckedChange={(checked) => setTermsAccepted(checked === true)}
+              onCheckedChange={(val) => setTermsAccepted(String(val))}
             />
             <div className="grid gap-1.5 leading-none">
               <label
@@ -314,17 +327,18 @@ const BookingFlowbyLocation = ({
         <CardFooter className="bg-gray-50 p-6 rounded-b-xl">
           <Button
             // onClick={handleBookingSubmit}
-            onClick={() => console.log(data)}
+            onClick={() => handleBookingSubmit()}
             disabled={
-              isProcessing ||
-              !termsAccepted ||
-              !bookingDate ||
-              !timeSlot ||
-              !selectedBooth
+              isLoading ||
+              !terms_accepted ||
+              !booking_date ||
+              !booking_time ||
+              !booking_booth ||
+              !payment_method
             }
             className="w-full text-lg bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white shadow-lg"
           >
-            {isProcessing ? (
+            {/* {payment_method === "offline" ? (
               <>
                 <Loader2 className="mr-2 h-5 w-5 animate-spin" />
                 Processing Payment...
@@ -332,6 +346,15 @@ const BookingFlowbyLocation = ({
             ) : (
               <>
                 Proceed to Payment <ArrowRight className="ml-2 h-5 w-5" />
+              </>
+            )} */}
+            {isLoading ? (
+              <>
+                <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+              </>
+            ) : (
+              <>
+                Reserve your scooter <ArrowRight className="ml-2 h-5 w-5" />
               </>
             )}
           </Button>

@@ -4,11 +4,16 @@ import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 import { eq } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
 
+const allowedAdmins = [
+  "kp_ec942ccb8ce64da2b14348e55c6bcef4",
+  "kp_30e438237edd413782de64cd674060c8",
+];
+
 export async function POST(req: NextRequest) {
   try {
     const { getUser } = getKindeServerSession();
     const user = await getUser();
-    if (user?.id !== "kp_ec942ccb8ce64da2b14348e55c6bcef4") {
+    if (!allowedAdmins.includes(user?.id ?? "")) {
       return NextResponse.json(
         { success: false, error: "User is not authenticated" },
         { status: 400 }
@@ -27,7 +32,7 @@ export async function POST(req: NextRequest) {
     const [res] = await db
       .insert(onsiteBookingTable)
       .values({
-        adminUserId: user.id,
+        adminUserId: user?.id,
         customer_email,
         customer_name,
         customer_phone,

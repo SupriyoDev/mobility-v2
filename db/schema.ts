@@ -33,22 +33,25 @@ export const onsiteBookingTable = pgTable("onsiteBookingTable", {
 
 export const onlineBookingTable = pgTable("onlineBookingTable", {
   id: uuid().defaultRandom().primaryKey(),
-  userId: varchar({ length: 255 }).references(() => usersTable.id),
+  user_id: varchar({ length: 255 }).references(() => usersTable.id),
   terms_accepted: boolean().default(true),
-  booking_type: varchar({ length: 255 }).default("online"),
+  booking_type: varchar({ length: 255 }),
   booking_date: varchar({ length: 255 }).notNull(),
   booking_time: varchar({ length: 255 }).notNull(),
-  payment_method: varchar({ length: 255 }),
-  total_amount: integer(),
-  refund_amount: integer(),
+  booking_booth: varchar({ length: 255 }).notNull(),
+  booking_location: varchar({ length: 255 }).notNull(),
+  payment_method: varchar({ length: 255 }).default(""),
+  total_amount: integer().default(0),
+  refund_amount: integer().default(0),
   payment_status: varchar({ length: 255 }),
   booking_status: varchar({ length: 255 }),
   created_at: timestamp().defaultNow().notNull(),
 });
 
 export type booking_type = "onsite" | "online";
+export type payment_method = "offline" | "online";
 export type booking_status = "pending" | "booked" | "cancelled";
-export type payment_status = "paid" | "cancelled";
+export type payment_status = "pending" | "cancelled" | "confirmed";
 
 export type OnsiteBooking = InferSelectModel<typeof onsiteBookingTable>;
 export type UserData = InferSelectModel<typeof usersTable>;

@@ -1,8 +1,8 @@
 "use client";
 
-import React, { useState, useEffect, useCallback } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { Bike, Filter, Search, Loader2, Calendar } from "lucide-react";
+import BookingCard from "@/components/shared/Booking-card";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -11,11 +11,32 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import BookingCard from "@/components/shared/Booking-card";
+import { OnlineBooking, OnsiteBooking } from "@/db/schema";
+import { useKindeBrowserClient } from "@kinde-oss/kinde-auth-nextjs";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
-import { OnsiteBooking } from "@/db/schema";
+import { format } from "date-fns";
+import { motion } from "framer-motion";
+import {
+  Bike,
+  Calendar,
+  Clock,
+  CreditCard,
+  Filter,
+  Hash,
+  Loader2,
+  MapPin,
+  Search,
+} from "lucide-react";
+import { redirect, useRouter } from "next/navigation";
+import { useCallback, useEffect, useState } from "react";
+
+const statusColors: Record<string, string> = {
+  pending: "bg-yellow-100 text-yellow-800 border-yellow-200",
+  confirmed: "bg-green-100 text-green-800 border-green-200",
+  booked: "bg-blue-100 text-blue-800 border-blue-200",
+  cancelled: "bg-red-100 text-red-800 border-red-200",
+};
 
 export default function AllBookings() {
   const [filteredBookings, setFilteredBookings] = useState<any[]>([]);
@@ -24,22 +45,69 @@ export default function AllBookings() {
   const [statusFilter, setStatusFilter] = useState("all");
   const [sortBy, setSortBy] = useState("recent");
 
+  const allowedAdmins = [
+    "kp_ec942ccb8ce64da2b14348e55c6bcef4",
+    "kp_30e438237edd413782de64cd674060c8",
+  ];
+  const { user } = useKindeBrowserClient();
+
+  const isAdmin = user && allowedAdmins.includes(user.id);
+
   const {
-    data: bookings,
-    error,
-    isPending,
+    data: adminOnsiteBookings,
+    error: adminError,
+    isPending: adminPending,
   } = useQuery<OnsiteBooking[]>({
     queryKey: ["all_onsite_booking"],
     queryFn: async () => {
       const res = await axios.get("/api/onsite-booking");
       return res.data.data;
     },
-    gcTime: 1000 * 60 * 20,
-    staleTime: 1000 * 60 * 20,
-    refetchOnMount: false,
+    enabled: !!isAdmin,
+    gcTime: 1000 * 60 * 5,
+    staleTime: 1000 * 60 * 3,
     refetchOnReconnect: true,
     refetchOnWindowFocus: false,
   });
+
+  const {
+    data: userOnlineBookings,
+    error: userError,
+    isPending: userPending,
+  } = useQuery<OnlineBooking[]>({
+    queryKey: ["user_online_booking"],
+    queryFn: async () => {
+      const res = await axios.get("/api/online-booking");
+      return res.data.data;
+    },
+    enabled: !!user && !isAdmin,
+    gcTime: 1000 * 60 * 10,
+    staleTime: 1000 * 60 * 5,
+    refetchOnReconnect: true,
+    refetchOnWindowFocus: false,
+  });
+  console.log("user online booking", userOnlineBookings);
+
+  const {
+    data: allOnlineBookings,
+    error: allError,
+    isPending: allPending,
+  } = useQuery<OnlineBooking[]>({
+    queryKey: ["all_online_booking"],
+    queryFn: async () => {
+      const res = await axios.get("/api/online-booking");
+      return res.data.data;
+    },
+    enabled: !!isAdmin,
+    gcTime: 1000 * 60 * 5,
+    staleTime: 1000 * 60 * 3,
+    refetchOnReconnect: true,
+    refetchOnWindowFocus: false,
+  });
+
+  const bookings = isAdmin ? adminOnsiteBookings : userOnlineBookings;
+  const isPending = isAdmin ? adminPending : userPending;
+  const error = isAdmin ? adminError : userError;
 
   const filterAndSortBookings = useCallback(() => {
     const result = bookings;
@@ -187,58 +255,276 @@ export default function AllBookings() {
         </motion.div>
 
         {/* Bookings List */}
-        {isPending ? (
-          <div className="flex flex-col items-center justify-center py-20">
-            <Loader2 className="w-12 h-12 text-blue-600 animate-spin mb-4" />
-            <p className="text-gray-600">Loading bookings...</p>
-          </div>
-        ) : filteredBookings && filteredBookings.length === 0 ? (
-          <motion.div
-            className="text-center py-20"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-          >
-            <div className="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
-              <Bike className="w-12 h-12 text-gray-400" />
+        {isAdmin &&
+          (isPending ? (
+            <div className="flex flex-col items-center justify-center py-20">
+              <Loader2 className="w-12 h-12 text-blue-600 animate-spin mb-4" />
+              <p className="text-gray-600">Loading bookings...</p>
             </div>
-            <h3 className="text-2xl font-bold text-gray-900 mb-2">
-              No bookings found
-            </h3>
-            <p className="text-gray-600">
-              {searchTerm || statusFilter !== "all"
-                ? "Try adjusting your filters or search term"
-                : "Start by creating your first booking"}
-            </p>
-          </motion.div>
-        ) : (
-          <div className="space-y-6">
-            <AnimatePresence>
-              {filteredBookings &&
-                filteredBookings.map((booking, index) => (
-                  <motion.div
-                    key={booking.id}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -20 }}
-                    transition={{ delay: index * 0.05 }}
-                  >
-                    <BookingCard booking={booking} />
-                  </motion.div>
-                ))}
-            </AnimatePresence>
+          ) : filteredBookings && filteredBookings.length === 0 ? (
+            <motion.div
+              className="text-center py-20"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+            >
+              <div className="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                <Bike className="w-12 h-12 text-gray-400" />
+              </div>
+              <h3 className="text-2xl font-bold text-gray-900 mb-2">
+                No bookings found
+              </h3>
+              <p className="text-gray-600">
+                {searchTerm || statusFilter !== "all"
+                  ? "Try adjusting your filters or search term"
+                  : "Start by creating your first booking"}
+              </p>
+            </motion.div>
+          ) : (
+            <div className="space-y-6">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4 }}
+              >
+                <div className="overflow-x-auto shadow-xl rounded-2xl border border-gray-200 ">
+                  <table className="w-full border-collapse bg-white text-left text-sm text-gray-700">
+                    {/* Table Header */}
+                    <thead className="bg-gradient-to-r from-bgsecondary to-bgtertiary text-white w-full">
+                      <tr className=" px-4 w-full">
+                        <th className="px-6 py-4 font-medium w-[15%] text-base">
+                          Booking Ref
+                        </th>
+                        <th className="px-6 py-4 font-medium w-[15%] text-base">
+                          Full Name
+                        </th>
+                        <th className="px-6 py-4 font-medium w-[20%] text-base">
+                          Email
+                        </th>
+                        <th className="px-6 py-4 font-medium w-[15%] text-base">
+                          Phone
+                        </th>
+                        <th className="px-6 py-4 font-medium w-[10%] text-base">
+                          Status
+                        </th>
+                        <th className="px-6 py-4 font-medium w-[10%] text-base">
+                          Terms Accepted
+                        </th>
+                        <th className="px-6 py-4 font-medium w-[15%] text-base">
+                          Booked On
+                        </th>
+                      </tr>
+                    </thead>
+
+                    <tbody className="divide-y divide-gray-200 w-full">
+                      {filteredBookings &&
+                        filteredBookings.map((booking, index) => (
+                          <BookingCard booking={booking} key={index} />
+                        ))}
+                      {/* 
+                    {filteredBookings.map((booking) => (
+                      <tr className="hover:bg-blue-50 transition-colors  px-4 ">
+                        <td className="px-6 py-4 font-semibold text-blue-900 w-[15%]"></td>
+                        <td className="px-6 py-4 w-[15%]"></td>
+                        <td className="px-6 py-4 w-[15%]"></td>
+                        <td className="px-6 py-4 w-[15%]"></td>
+                        <td className="px-6 py-4 w-[15%]"></td>
+                        <td className="px-6 py-4 col-span-1"></td>
+                        <td className="px-6 py-4 col-span-2"></td>
+                      </tr>
+                    ))} */}
+                    </tbody>
+                  </table>
+                </div>
+              </motion.div>
+            </div>
+          ))}
+
+        {/* Online Booking Table */}
+
+        {isAdmin && (
+          <div className="pt-12 py-6">
+            <h4 className="text-3xl font-bold text-transparent bg-gradient-to-br from-bgsecondary to-bgtertiary bg-clip-text">
+              Online Bookings
+            </h4>
           </div>
         )}
 
-        {/* Summary Stats */}
-        {!isLoading && filteredBookings.length > 0 && (
-          <motion.div
-            className="mt-8 text-center text-gray-600"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-          >
-            {/* Showing {filteredBookings.length} of {bookings.length} booking
-            {bookings.length !== 1 ? "s" : ""} */}
-          </motion.div>
+        {isAdmin &&
+          (allPending ? (
+            <div className="flex flex-col items-center justify-center py-20 ">
+              <Loader2 className="w-12 h-12 text-blue-600 animate-spin mb-4" />
+              <p className="text-gray-600">Loading bookings...</p>
+            </div>
+          ) : allOnlineBookings?.length === 0 ? (
+            <motion.div
+              className="text-center py-20"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+            >
+              <div className="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                <Bike className="w-12 h-12 text-gray-400" />
+              </div>
+              <h3 className="text-2xl font-bold text-gray-900 mb-2">
+                No online bookings found!
+              </h3>
+            </motion.div>
+          ) : (
+            <div className="space-y-6">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4 }}
+              >
+                <div className="overflow-x-auto shadow-xl rounded-2xl border border-gray-200 ">
+                  <table className="w-full border-collapse bg-white text-left text-sm text-gray-700">
+                    {/* Table Header */}
+                    <thead className="bg-gradient-to-r from-bgsecondary to-bgtertiary text-white w-full">
+                      <tr className=" px-4 w-full">
+                        <th className="px-6 py-4 font-medium w-[15%] text-base">
+                          Booking Ref
+                        </th>
+                        <th className="px-6 py-4 font-medium w-[15%] text-base">
+                          Booking Date
+                        </th>
+                        <th className="px-6 py-4 font-medium w-[20%] text-base">
+                          Booking Booth
+                        </th>
+                        <th className="px-6 py-4 font-medium w-[15%] text-base">
+                          Payment Status
+                        </th>
+                        <th className="px-6 py-4 font-medium w-[10%] text-base">
+                          Booking Status
+                        </th>
+                        <th className="px-6 py-4 font-medium w-[10%] text-base">
+                          Terms Accepted
+                        </th>
+                        <th className="px-6 py-4 font-medium w-[15%] text-base">
+                          Booking time
+                        </th>
+                      </tr>
+                    </thead>
+
+                    <tbody className="divide-y divide-gray-200 w-full">
+                      {/* {allOnlineBookings &&
+                      allOnlineBookings.map((booking, index) => (
+                        <BookingCard booking={booking} key={index} />
+                      ))} */}
+
+                      {allOnlineBookings?.map((booking) => (
+                        <tr className="hover:bg-blue-50 transition-colors  px-4 ">
+                          <td className="px-6 py-4 font-semibold text-blue-900 w-[15%]">
+                            {booking.id.slice(0, 8)}
+                          </td>
+                          <td className="px-6 py-4 w-[15%]">
+                            {new Date(booking.booking_date).toLocaleDateString(
+                              "en-US",
+                              {
+                                timeZone: "Asia/Dubai",
+                                month: "short",
+                                day: "2-digit",
+                                year: "numeric",
+                              }
+                            )}
+                          </td>
+                          <td className="px-6 py-4 w-[15%]">
+                            {booking.booking_booth} (
+                            {booking.booking_location.split("-").join(" ")})
+                          </td>
+                          <td className="px-6 py-4 w-[15%]">
+                            {booking.payment_status}
+                          </td>
+                          <td className="px-6 py-4 w-[15%]">
+                            {booking.booking_status}
+                          </td>
+                          <td className="px-6 py-4 col-span-1">
+                            {booking.terms_accepted === true ? "Yes" : ""}
+                          </td>
+                          <td className="px-6 py-4 col-span-2">
+                            {booking.booking_time}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </motion.div>
+            </div>
+          ))}
+
+        {!isAdmin && (
+          <div>
+            {userOnlineBookings &&
+              userOnlineBookings?.map((booking) => (
+                <Card className="shadow-lg hover:shadow-xl transition-all duration-300">
+                  <CardHeader className="flex justify-between items-center">
+                    <div className="flex items-center gap-2">
+                      <Hash className="w-5 h-5 text-blue-600" />
+                      <CardTitle className="text-lg font-bold">
+                        {booking.id.slice(0, 8).toUpperCase()}
+                      </CardTitle>
+                    </div>
+                    <Badge
+                      className={`${
+                        statusColors[booking.booking_status ?? "booked"] ||
+                        "bg-gray-100 text-gray-800"
+                      } px-3 py-1`}
+                    >
+                      {booking.booking_status}
+                    </Badge>
+                  </CardHeader>
+
+                  <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-2">
+                    {/* Booking Type */}
+                    <div className="flex items-center gap-2">
+                      <CreditCard className="w-5 h-5 text-gray-600" />
+                      <p className="text-sm font-medium">
+                        {booking.booking_type}
+                      </p>
+                    </div>
+
+                    {/* Payment Status */}
+                    <div className="flex items-center gap-2">
+                      <CreditCard className="w-5 h-5 text-gray-600" />
+                      <p className="text-sm font-medium capitalize">
+                        {booking.payment_status}
+                      </p>
+                    </div>
+
+                    {/* Date */}
+                    <div className="flex items-center gap-2">
+                      <Calendar className="w-5 h-5 text-gray-600" />
+                      <p className="text-sm font-medium">
+                        {format(new Date(booking.booking_date), "MMM dd, yyyy")}
+                      </p>
+                    </div>
+
+                    {/* Time */}
+                    <div className="flex items-center gap-2">
+                      <Clock className="w-5 h-5 text-gray-600" />
+                      <p className="text-sm font-medium">
+                        {booking.booking_time}
+                      </p>
+                    </div>
+
+                    {/* Booth */}
+                    <div className="flex items-center gap-2">
+                      <MapPin className="w-5 h-5 text-gray-600" />
+                      <p className="text-sm font-medium">
+                        {booking.booking_booth}
+                      </p>
+                    </div>
+
+                    {/* Location */}
+                    <div className="flex items-center gap-2">
+                      <MapPin className="w-5 h-5 text-gray-600" />
+                      <p className="text-sm font-medium">
+                        {booking.booking_location}
+                      </p>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+          </div>
         )}
       </div>
     </div>

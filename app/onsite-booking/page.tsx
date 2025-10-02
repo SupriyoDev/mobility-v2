@@ -9,11 +9,13 @@ import axios from "axios";
 import { useBookingStore, useOnsiteBookStore } from "@/store/store";
 import { useShallow } from "zustand/react/shallow";
 import { toast } from "sonner";
+import { useQueryClient } from "@tanstack/react-query";
 
 export default function OnsiteBooking() {
   const [step, setStep] = useState("terms"); // 'terms' or 'success'
   const [termsAccepted, setTermsAccepted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const queryClient = useQueryClient();
 
   const { bookingId, setBookingId } = useBookingStore(
     useShallow((state) => ({
@@ -45,6 +47,9 @@ export default function OnsiteBooking() {
         const result = await axios.post("/api/onsite-booking", bookingData);
 
         if (result.data.success === true) {
+          await queryClient.invalidateQueries({
+            queryKey: ["all_onsite_booking"],
+          });
           setBookingId(result.data.booking_id);
         }
 

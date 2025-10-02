@@ -10,7 +10,6 @@ export default withAuth(async function middleware() {}, {
     "/terms",
     "/api/kinde-webhook",
     "/api/onsite-booking",
-    "/onsite-booking",
   ],
 });
 
