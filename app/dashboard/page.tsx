@@ -20,6 +20,7 @@ import { motion } from "framer-motion";
 import {
   Bike,
   Calendar,
+  CalendarDays,
   Clock,
   CreditCard,
   Filter,
@@ -84,9 +85,7 @@ export default function AllBookings() {
     gcTime: 1000 * 60 * 10,
     staleTime: 1000 * 60 * 5,
     refetchOnReconnect: true,
-    refetchOnWindowFocus: false,
   });
-  console.log("user online booking", userOnlineBookings);
 
   const {
     data: allOnlineBookings,
@@ -459,73 +458,64 @@ export default function AllBookings() {
             {userOnlineBookings &&
               userOnlineBookings?.map((booking, i) => (
                 <Card
-                  className="shadow-lg hover:shadow-xl transition-all duration-300"
+                  className="my-3 w-full max-w-md md:max-w-2xl mx-auto rounded-2xl shadow-md border border-gray-200"
                   key={i}
                 >
-                  <CardHeader className="flex justify-between items-center">
-                    <div className="flex items-center gap-2">
-                      <Hash className="w-5 h-5 text-blue-600" />
-                      <CardTitle className="text-lg font-bold">
+                  <CardHeader className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+                    <CardTitle className="text-lg sm:text-xl font-semibold">
+                      Booking Ref:{" "}
+                      <span className="text-blue-600">
                         {booking.id.slice(0, 8).toUpperCase()}
-                      </CardTitle>
-                    </div>
+                      </span>
+                    </CardTitle>
                     <Badge
-                      className={`${
-                        statusColors[booking.booking_status ?? "booked"] ||
-                        "bg-gray-100 text-gray-800"
-                      } px-3 py-1`}
+                      variant={
+                        booking.payment_status === "pending"
+                          ? "outline"
+                          : "default"
+                      }
+                      className={
+                        booking.payment_status === "pending"
+                          ? "bg-yellow-100 text-yellow-700 border-yellow-300"
+                          : "bg-green-100 text-green-700 border-green-300"
+                      }
                     >
-                      {booking.booking_status}
+                      Payment {booking.payment_status}
                     </Badge>
                   </CardHeader>
 
-                  <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-2">
-                    {/* Booking Type */}
+                  <CardContent className="grid gap-4 text-sm sm:text-base">
                     <div className="flex items-center gap-2">
-                      <CreditCard className="w-5 h-5 text-gray-600" />
-                      <p className="text-sm font-medium">
-                        {booking.booking_type}
-                      </p>
+                      <CreditCard className="h-4 w-4 text-gray-500" />
+                      <span className="font-medium capitalize">
+                        {booking.booking_type} booking
+                      </span>
                     </div>
 
-                    {/* Payment Status */}
                     <div className="flex items-center gap-2">
-                      <CreditCard className="w-5 h-5 text-gray-600" />
-                      <p className="text-sm font-medium capitalize">
-                        {booking.payment_status}
-                      </p>
+                      <CalendarDays className="h-4 w-4 text-gray-500" />
+                      <span>
+                        {new Date(booking.booking_date).toLocaleDateString(
+                          "en-US",
+                          {
+                            month: "short",
+                            day: "2-digit",
+                            year: "numeric",
+                            timeZone: "Asia/Dubai", // ensure UAE time
+                          }
+                        )}{" "}
+                        at{" "}
+                        <span className="font-medium">
+                          {booking.booking_time}
+                        </span>
+                      </span>
                     </div>
 
-                    {/* Date */}
-                    <div className="flex items-center gap-2">
-                      <Calendar className="w-5 h-5 text-gray-600" />
-                      <p className="text-sm font-medium">
-                        {format(new Date(booking.booking_date), "MMM dd, yyyy")}
-                      </p>
-                    </div>
-
-                    {/* Time */}
-                    <div className="flex items-center gap-2">
-                      <Clock className="w-5 h-5 text-gray-600" />
-                      <p className="text-sm font-medium">
-                        {booking.booking_time}
-                      </p>
-                    </div>
-
-                    {/* Booth */}
-                    <div className="flex items-center gap-2">
-                      <MapPin className="w-5 h-5 text-gray-600" />
-                      <p className="text-sm font-medium">
-                        {booking.booking_booth}
-                      </p>
-                    </div>
-
-                    {/* Location */}
-                    <div className="flex items-center gap-2">
-                      <MapPin className="w-5 h-5 text-gray-600" />
-                      <p className="text-sm font-medium">
-                        {booking.booking_location}
-                      </p>
+                    <div className="flex items-start gap-2">
+                      <MapPin className="h-4 w-4 text-gray-500 mt-0.5" />
+                      <span>
+                        {booking.booking_booth}, {booking.booking_location}
+                      </span>
                     </div>
                   </CardContent>
                 </Card>

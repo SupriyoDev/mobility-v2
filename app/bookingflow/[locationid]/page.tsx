@@ -11,6 +11,14 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -22,17 +30,21 @@ import {
 } from "@/components/ui/select";
 import { useUserOnlineBookingStore } from "@/store/store";
 import { CheckedState } from "@radix-ui/react-checkbox";
+import { useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import {
   AlertTriangle,
   ArrowRight,
   CalendarIcon,
+  CheckCircle2,
   Clock,
   Loader2,
   MapPin,
 } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import React, { use, useState } from "react";
+import { toast } from "sonner";
 import { useShallow } from "zustand/react/shallow";
 
 const BookingFlowbyLocation = ({
@@ -41,6 +53,8 @@ const BookingFlowbyLocation = ({
   params: Promise<{ locationid: string }>;
 }) => {
   const { locationid } = use(params);
+  const router = useRouter();
+  const queryClient = useQueryClient();
 
   const {
     terms_accepted,
@@ -81,6 +95,8 @@ const BookingFlowbyLocation = ({
   );
 
   const [isLoading, setIsLoading] = useState(false);
+
+  const [open, setOpen] = useState(false);
   const [error, setError] = useState(null);
 
   const timeSlots = [
@@ -123,7 +139,16 @@ const BookingFlowbyLocation = ({
 
       const res = await axios.post("/api/online-booking", data);
 
-      console.log(res);
+      if (res.data.data.success === true) {
+        await queryClient.invalidateQueries({
+          queryKey: ["user_online_booking"],
+        });
+        setBookingTime("");
+        setBookingBooth("");
+        setPaymentMethod("");
+        setTermsAccepted("");
+      }
+      setOpen(true);
     } catch (error: any) {
       console.log(error);
     } finally {
@@ -360,6 +385,32 @@ const BookingFlowbyLocation = ({
           </Button>
         </CardFooter>
       </Card>
+
+      <div>
+        <Dialog open={open} onOpenChange={setOpen}>
+          <DialogContent className="sm:max-w-[425px]">
+            <DialogHeader>
+              <div className="flex items-center gap-2">
+                <CheckCircle2 className="w-6 h-6 text-green-600" />
+                <DialogTitle className="text-xl font-bold text-green-600">
+                  Booking Confirmed
+                </DialogTitle>
+              </div>
+              <DialogDescription>
+                Your booking has been successfully created. Please keep this
+                reference for future use.
+              </DialogDescription>
+            </DialogHeader>
+
+            <DialogFooter>
+              <Button onClick={() => setOpen(false)}>Close</Button>
+              <Button onClick={() => router.replace("/dashboard")}>
+                My bookings
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      </div>
     </div>
   );
 };
