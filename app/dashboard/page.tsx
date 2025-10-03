@@ -253,6 +253,14 @@ export default function AllBookings() {
           </div>
         </motion.div>
 
+        {isAdmin && (
+          <div className=" pb-6">
+            <h4 className="text-3xl font-bold text-transparent bg-gradient-to-br from-bgsecondary to-bgtertiary bg-clip-text">
+              Walking Customers
+            </h4>
+          </div>
+        )}
+
         {/* Bookings List */}
         {isAdmin &&
           (isPending ? (
