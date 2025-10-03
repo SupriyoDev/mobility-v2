@@ -48,6 +48,7 @@ interface UserOnlineBookingStore {
   payment_method: string;
   payment_status: string;
   booking_location: string;
+  booking_id: string;
 
   setTermsAccepted: (val: string) => void;
   setBookingType: (val: string) => void;
@@ -57,6 +58,7 @@ interface UserOnlineBookingStore {
   setBookingLocation: (val: string) => void;
   setPaymentMethod: (val: string) => void;
   setPaymentStatus: (val: string) => void;
+  setBookingId: (val: string) => void;
 }
 
 export const useUserOnlineBookingStore = create<UserOnlineBookingStore>(
@@ -69,6 +71,7 @@ export const useUserOnlineBookingStore = create<UserOnlineBookingStore>(
     payment_method: "",
     payment_status: "",
     booking_location: "",
+    booking_id: "",
 
     setTermsAccepted: (val) => set({ terms_accepted: val }),
     setBookingType: (val) => set({ booking_type: val }),
@@ -78,5 +81,6 @@ export const useUserOnlineBookingStore = create<UserOnlineBookingStore>(
     setBookingLocation: (val) => set({ booking_location: val }),
     setPaymentMethod: (val) => set({ payment_method: val }),
     setPaymentStatus: (val) => set({ payment_status: val }),
+    setBookingId: (val) => set({ booking_id: val }),
   })
 );

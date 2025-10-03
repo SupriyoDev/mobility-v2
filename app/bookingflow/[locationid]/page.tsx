@@ -71,6 +71,9 @@ const BookingFlowbyLocation = ({
     setBookingTime,
     setBookingBooth,
 
+    booking_id,
+    setBookingId,
+
     setPaymentMethod,
     setPaymentStatus,
   } = useUserOnlineBookingStore(
@@ -82,6 +85,7 @@ const BookingFlowbyLocation = ({
       booking_booth: state.booking_booth,
       payment_method: state.payment_method,
       payment_status: state.payment_status,
+      booking_id: state.booking_id,
 
       setTermsAccepted: state.setTermsAccepted,
       setBookingType: state.setBookingType,
@@ -91,6 +95,7 @@ const BookingFlowbyLocation = ({
 
       setPaymentMethod: state.setPaymentMethod,
       setPaymentStatus: state.setPaymentStatus,
+      setBookingId: state.setBookingId,
     }))
   );
 
@@ -139,19 +144,23 @@ const BookingFlowbyLocation = ({
 
       const res = await axios.post("/api/online-booking", data);
 
-      if (res.data.data.success === true) {
-        await queryClient.invalidateQueries({
-          queryKey: ["user_online_booking"],
-        });
-        setBookingTime("");
-        setBookingBooth("");
-        setPaymentMethod("");
-        setTermsAccepted("");
+      if (res.data.data.success === false) {
+        toast("Booking failed");
       }
+
+      await queryClient.invalidateQueries({
+        queryKey: ["user_online_booking"],
+      });
+      setBookingId(res.data.data.booking_id);
+
       setOpen(true);
     } catch (error: any) {
       console.log(error);
     } finally {
+      setBookingTime("");
+      setBookingBooth("");
+      setPaymentMethod("");
+      setTermsAccepted("");
       setIsLoading(false);
     }
   };
@@ -282,7 +291,7 @@ const BookingFlowbyLocation = ({
                     <SelectValue placeholder="select Payment Method" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="offline">Offline</SelectItem>
+                    <SelectItem value="offline">Onsite Payment</SelectItem>
                     {/* <SelectItem value="online">Online</SelectItem> */}
                   </SelectContent>
                 </Select>
@@ -301,11 +310,12 @@ const BookingFlowbyLocation = ({
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-600">Deposit:</span>
-                    <span className="font-semibold">
-                      {/* {depositAmount} AED */}
-                      Offline Payment
-                    </span>
+                    <span className="font-semibold">{depositAmount} AED</span>
                   </div>
+                  <p className="text-xs text-gray-500">
+                    **AED 500 Deposit will be blocked temporary on site and will
+                    be release upon return of scooter
+                  </p>
                   {/* <hr className="my-2 border-blue-200" />
                   <div className="flex justify-between text-xl font-bold text-bgtertiary">
                     <span>Total Payable:</span>
@@ -401,6 +411,17 @@ const BookingFlowbyLocation = ({
                 reference for future use.
               </DialogDescription>
             </DialogHeader>
+
+            {booking_id && ( // ✅ only render if bookingId exists
+              <div className="grid gap-4 text-sm">
+                <div>
+                  <p className="font-semibold">Booking Reference</p>
+                  <p className="text-blue-600 font-bold text-xl">
+                    # {booking_id.slice(0, 8).toUpperCase()}
+                  </p>
+                </div>
+              </div>
+            )}
 
             <DialogFooter>
               <Button onClick={() => setOpen(false)}>Close</Button>

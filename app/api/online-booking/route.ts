@@ -33,10 +33,13 @@ export async function POST(req: NextRequest) {
 
     const terms = terms_accepted === "true";
 
+    const user_name = `${user.given_name} ${user.family_name}`;
+
     const [res] = await db
       .insert(onlineBookingTable)
       .values({
         user_id: user.id,
+        user_name,
         terms_accepted: terms,
         booking_booth,
         booking_time,

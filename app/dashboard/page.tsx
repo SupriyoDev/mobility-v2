@@ -382,8 +382,9 @@ export default function AllBookings() {
                         <th className="px-6 py-4 font-medium w-[15%] text-base">
                           Booking Ref
                         </th>
+                        <th>Customer Name</th>
                         <th className="px-6 py-4 font-medium w-[15%] text-base">
-                          Booking Date
+                          Booking Date/Booking Time
                         </th>
                         <th className="px-6 py-4 font-medium w-[20%] text-base">
                           Booking Booth
@@ -396,9 +397,6 @@ export default function AllBookings() {
                         </th>
                         <th className="px-6 py-4 font-medium w-[10%] text-base">
                           Terms Accepted
-                        </th>
-                        <th className="px-6 py-4 font-medium w-[15%] text-base">
-                          Booking time
                         </th>
                       </tr>
                     </thead>
@@ -417,6 +415,9 @@ export default function AllBookings() {
                           <td className="px-6 py-4 font-semibold text-blue-900 w-[15%]">
                             {booking.id.slice(0, 8)}
                           </td>
+                          <td className="px-6 py-4 col-span-2">
+                            {booking.user_name}
+                          </td>
                           <td className="px-6 py-4 w-[15%]">
                             {new Date(booking.booking_date).toLocaleDateString(
                               "en-US",
@@ -427,6 +428,8 @@ export default function AllBookings() {
                                 year: "numeric",
                               }
                             )}
+                            {" / "}
+                            {booking.booking_time}
                           </td>
                           <td className="px-6 py-4 w-[15%]">
                             {booking.booking_booth} (
@@ -440,9 +443,6 @@ export default function AllBookings() {
                           </td>
                           <td className="px-6 py-4 col-span-1">
                             {booking.terms_accepted === true ? "Yes" : ""}
-                          </td>
-                          <td className="px-6 py-4 col-span-2">
-                            {booking.booking_time}
                           </td>
                         </tr>
                       ))}

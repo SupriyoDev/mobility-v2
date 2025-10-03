@@ -34,6 +34,7 @@ export const onsiteBookingTable = pgTable("onsiteBookingTable", {
 export const onlineBookingTable = pgTable("onlineBookingTable", {
   id: uuid().defaultRandom().primaryKey(),
   user_id: varchar({ length: 255 }).references(() => usersTable.id),
+  user_name: varchar({ length: 255 }).notNull(),
   terms_accepted: boolean().default(true),
   booking_type: varchar({ length: 255 }),
   booking_date: varchar({ length: 255 }).notNull(),
@@ -49,7 +50,7 @@ export const onlineBookingTable = pgTable("onlineBookingTable", {
 });
 
 export type booking_type = "onsite" | "online";
-export type payment_method = "offline" | "online";
+export type payment_method = "OnSite Payment" | "Online Payment";
 export type booking_status = "pending" | "booked" | "cancelled";
 export type payment_status = "pending" | "cancelled" | "confirmed";
 
